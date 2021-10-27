@@ -125,4 +125,8 @@
     </Page>
   </ItemGroup>
 
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="$(SolutionDir)\..\post-build-script.bat $(SolutionDir) $(TargetDir)" />
+  </Target>
+
 </Project>
