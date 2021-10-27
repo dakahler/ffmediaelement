@@ -142,6 +142,28 @@
             return false;
         }).ConfigureAwait(true);
 
+        /// <summary>
+        /// wait signal.
+        /// </summary>
+        public void Wait()
+        {
+            // this.wMutex.WaitOne();
+            m_wait = true;
+            while (m_wait)
+            {
+                System.Threading.Thread.Sleep(1000);
+            }
+        }
+
+        /// <summary>
+        /// .
+        /// </summary>
+        public void ReleaseWait()
+        {
+            // this.wMutex.ReleaseMutex();
+            m_wait = false;
+        }
+
         #endregion
 
         /// <inheritdoc />

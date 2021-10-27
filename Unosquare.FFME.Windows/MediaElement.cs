@@ -51,6 +51,7 @@
 
         private bool m_IsDisposed;
 
+        private bool m_wait;
         #endregion
 
         #region Constructors
@@ -82,6 +83,8 @@
         {
             try
             {
+                m_wait = true;
+
                 AllowContentChange = true;
 
                 if (!Library.IsInDesignMode)

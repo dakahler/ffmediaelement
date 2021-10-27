@@ -196,6 +196,8 @@
             // MediaElement event bindings
             Media.PreviewMouseDoubleClick += OnMediaDoubleClick;
             Media.MediaInitializing += OnMediaInitializing;
+            Media.MediaOpening += OnMediaOpeningMy;
+            Media.PacketRead += OnPacketReadMy;
             Media.MediaOpening += OnMediaOpening;
             Media.MediaOpened += OnMediaOpened;
             Media.MediaReady += OnMediaReady;
@@ -273,7 +275,7 @@
         private async void OnWindowKeyDown(object sender, KeyEventArgs e)
         {
             // Debug.WriteLine($"KEY: {e.Key}, SRC: {e.OriginalSource?.GetType().Name}");
-            if (e.OriginalSource is TextBox)
+            if (e.OriginalSource is TextBox || e.OriginalSource is PasswordBox)
                 return;
 
             // Keep the key focus on the main window

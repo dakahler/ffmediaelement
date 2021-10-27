@@ -62,5 +62,31 @@
                 </StackPanel>
             </Border>
         </Grid>
+
+        <!-- It's important that this is in the end of the XAML as it needs to be on top of everything else! -->
+        <Grid x:Name="InputBox" Visibility="Visible">
+            <Grid Background="Black" Opacity="0.75" />
+            <Border
+                MinWidth="00"
+                Background="DimGray" 
+                BorderBrush="Black" 
+                BorderThickness="1" 
+            
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Center" Width="154" >
+                <StackPanel>
+                    <TextBlock Margin="10,5" Text="Password:" Foreground="WhiteSmoke" FontWeight="Bold" FontSize="12" HorizontalAlignment="Left" />
+                    <PasswordBox Margin="10,5" PasswordChar ="*" HorizontalAlignment="Center" x:Name="InputTextBox" Width="130"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
+                        <Button x:Name="YesButton" Margin="10,5" Content="Yes" Foreground="WhiteSmoke" Background="{x:Null}" 
+                          Width="60" Click="YesButton_Click" BorderBrush="Black" BorderThickness="0.5"/>
+                        <Button x:Name="NoButton" Margin="0,5" Content="No" Foreground="WhiteSmoke" Background="{x:Null}" Width="60" Click="NoButton_Click"
+                                BorderBrush="Black" BorderThickness="0.5"
+                                />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+
     </Grid>
 </Window>
