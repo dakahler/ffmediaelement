@@ -248,6 +248,42 @@
                 NotifyPropertyChanged();
             }
         }
+#if true
+        /// <summary>
+        /// Gets or sets the media element position.
+        /// </summary>
+        public Point MediaElementPos
+        {
+            get
+            {
+                var m = App.ViewModel.MediaElement;
+                if (m == null) return new Point(0, 0);
+
+                var transform = m.RenderTransform as ScaleTransform;
+                if (transform == null) return new Point(0, 0);
+
+                return new Point(transform.CenterX, transform.CenterY);
+            }
+            set
+            {
+                var m = App.ViewModel.MediaElement;
+                if (m == null) return;
+
+                var transform = m.RenderTransform as ScaleTransform;
+                if (transform == null)
+                {
+                    transform = new ScaleTransform(1, 1);
+                    m.RenderTransformOrigin = new Point(0.5, 0.5);
+                    m.RenderTransform = transform;
+                }
+
+                transform.CenterX = value.X;
+                transform.CenterY = value.Y;
+
+                NotifyPropertyChanged();
+            }
+        }
+#endif
 
         /// <inheritdoc />
         internal override void OnApplicationLoaded()

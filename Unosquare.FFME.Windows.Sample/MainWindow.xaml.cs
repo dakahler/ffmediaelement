@@ -4,6 +4,7 @@
     using Common;
     using Foundation;
     using System;
+    using System.Diagnostics;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Windows;
@@ -143,11 +144,38 @@
             MouseMove += (s, e) =>
             {
                 var currentPosition = e.GetPosition(window);
-                if (Math.Abs(currentPosition.X - LastMousePosition.X) > double.Epsilon ||
-                    Math.Abs(currentPosition.Y - LastMousePosition.Y) > double.Epsilon)
+                double diffX = currentPosition.X - LastMousePosition.X;
+                double diffY = currentPosition.Y - LastMousePosition.Y;
+                if (Math.Abs(diffX) > double.Epsilon ||
+                    Math.Abs(diffY) > double.Epsilon)
                     LastMouseMoveTime = DateTime.UtcNow;
 
+                if (e.MouseDevice.LeftButton == MouseButtonState.Pressed)
+                {
+                    this.Cursor = Cursors.Hand;
+
+                    // if (ViewModel.Controller.MediaElementZoom > 1)
+                    {
+                        Debug.WriteLine($"debug pos:{ViewModel.Controller.MediaElementPos}");
+                        ViewModel.Controller.MediaElementPos = new Point(
+                            ViewModel.Controller.MediaElementPos.X - diffX,
+                            ViewModel.Controller.MediaElementPos.Y - diffY);
+                    }
+                }
+
                 LastMousePosition = currentPosition;
+            };
+
+            MouseDown += (s, e) =>
+            {
+                // start of grab ?
+                if (e.MouseDevice.LeftButton == MouseButtonState.Pressed)
+                {
+                    var src = e.OriginalSource as UIElement;
+                    this.Cursor = Cursors.Hand;
+
+                    Debug.WriteLine($"debug zoom:{ViewModel.Controller.MediaElementZoom}");
+                }
             };
 
             MouseLeave += (s, e) =>
@@ -164,24 +192,29 @@
             MouseMoveTimer.Tick += (s, e) =>
             {
                 var elapsedSinceMouseMove = DateTime.UtcNow.Subtract(LastMouseMoveTime);
-                if (elapsedSinceMouseMove.TotalMilliseconds >= 3000 && Media.IsOpen && ControllerPanel.IsMouseOver == false
+                if (elapsedSinceMouseMove.TotalMilliseconds >= 3000 && Media.IsOpen &&
+                    (ControllerPanel.IsMouseOver == false)
                     && PropertiesPanel.Visibility != Visibility.Visible && ControllerPanel.SoundMenuPopup.IsOpen == false)
                 {
                     if (IsControllerHideCompleted) return;
                     Cursor = Cursors.None;
                     HideControllerAnimation?.Begin();
                     IsControllerHideCompleted = false;
+
+                    // MyTitleBar.Visibility = Visibility.Hidden;
                 }
                 else
                 {
                     Cursor = Cursors.Arrow;
                     ControllerPanel.Visibility = Visibility.Visible;
                     ShowControllerAnimation?.Begin();
+                    MyTitleBar.Visibility = Visibility.Visible;
                 }
             };
 
             MouseMoveTimer.Start();
 
+            StateChanged += MainWindowStateChangeRaised;
             #endregion
         }
 
@@ -573,8 +606,72 @@
 
             var delta = (e.Delta / 2000d).ToMultipleOf(0.05d);
             ViewModel.Controller.MediaElementZoom = Math.Round(App.ViewModel.Controller.MediaElementZoom + delta, 2);
+            if (ViewModel.Controller.MediaElementZoom < 1)
+                ViewModel.Controller.MediaElementPos = new Point(0, 0);
         }
 
+        // Can execute
+        private void CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        // Minimize
+        private void CommandBinding_Executed_Minimize(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.MinimizeWindow(this);
+        }
+
+        // Maximize
+        private void CommandBinding_Executed_Maximize(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.MaximizeWindow(this);
+        }
+
+        // Restore
+        private void CommandBinding_Executed_Restore(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.RestoreWindow(this);
+        }
+
+        // Close
+        private void CommandBinding_Executed_Close(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.CloseWindow(this);
+        }
+
+        // State change
+        private void MainWindowStateChangeRaised(object sender, EventArgs e)
+        {
+            if (WindowState == WindowState.Maximized)
+            {
+                MainWindowBorder.BorderThickness = new Thickness(0);
+
+                // RestoreButton.Visibility = Visibility.Visible;
+                // MaximizeButton.Visibility = Visibility.Collapsed;
+                MyTitleBar.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                MainWindowBorder.BorderThickness = new Thickness(0);
+
+                // RestoreButton.Visibility = Visibility.Collapsed;
+                // MaximizeButton.Visibility = Visibility.Visible;
+                MyTitleBar.Visibility = Visibility.Visible;
+            }
+        }
+
+        // mouse enter event
+        private void MyTitleBar_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Debug.WriteLine($"mouse enter titlebar");
+        }
+
+        // mouse enter event
+        private void MyTitleBar_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Debug.WriteLine($"mouse leave titlebar");
+        }
         #endregion
     }
 }

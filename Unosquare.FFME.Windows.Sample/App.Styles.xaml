@@ -293,4 +293,78 @@
         </Setter>
     </Style>
 
+
+    <!--Window style-->
+    <Style TargetType="{x:Type Window}" x:Key="CustomWindowStyle">
+        <Setter Property="WindowChrome.WindowChrome">
+            <Setter.Value>
+                <WindowChrome CaptionHeight="30" />
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+        <Trigger Property="WindowState" Value="Maximized">
+                <Setter Property="BorderThickness" Value="0" />
+        </Trigger>
+        </Style.Triggers>
+    </Style>
+
+
+    <!--<Setter.Value>
+                    {Binding Source={x:Static SystemParameters.WindowResizeBorderThickness}}"/>
+        <WindowChrome CaptionHeight="30"
+                          CornerRadius="0"
+                          GlassFrameThickness="0"
+                          ResizeBorderThickness="3"
+                          NonClientFrameEdges="None"/>
+    </Setter.Value>-->
+
+    <!--Base style for title bar buttons-->
+    <Style x:Key="CaptionButtonStyle" TargetType="Button">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid x:Name="LayoutRoot" Background="Transparent" Width="48" Height="30">
+                        <TextBlock x:Name="txt" Text="{TemplateBinding Content}" FontFamily="Segoe MDL2 Assets" FontSize="11" 
+                                   Foreground="DarkGray" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   RenderOptions.ClearTypeHint="Auto" TextOptions.TextRenderingMode="Aliased"  TextOptions.TextFormattingMode="Display"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="LayoutRoot" Property="Background" Value="#E5E5E5"/>
+                            <Setter TargetName="txt" Property="Foreground" Value="#000000"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+
+    <!--<Style.Resources>
+            <Style TargetType="Button">
+                <Setter Property="Background" Value="Yellow"></Setter>
+            </Style>
+        </Style.Resources>-->
+    
+    <!--Minimize-->
+    <Style x:Key="MinimizeButtonStyle" TargetType="Button" BasedOn="{StaticResource CaptionButtonStyle}">
+        <Setter Property="Content" Value="&#xe921;"/>
+    </Style>
+
+    <!--Maximize-->
+    <Style x:Key="MaximizeButtonStyle" TargetType="Button" BasedOn="{StaticResource CaptionButtonStyle}">
+        <Setter Property="Content" Value="&#xe922;"/>
+    </Style>
+
+    <!--Restore-->
+    <Style x:Key="RestoreButtonStyle" TargetType="Button" BasedOn="{StaticResource CaptionButtonStyle}">
+        <Setter Property="Content" Value="&#xE923;"/>
+    </Style>
+
+    <!--Close-->
+    <Style x:Key="CloseButtonStyle" TargetType="Button" BasedOn="{StaticResource CaptionButtonStyle}">
+        <Setter Property="Content" Value="&#xE8bb;"/>
+    </Style>
+
 </ResourceDictionary>

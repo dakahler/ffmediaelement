@@ -1,4 +1,5 @@
-﻿<Window x:Name="window" x:Class="Unosquare.FFME.Windows.Sample.MainWindow"
+﻿
+<Window x:Name="window" x:Class="Unosquare.FFME.Windows.Sample.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,8 +7,20 @@
         xmlns:ffme="clr-namespace:Unosquare.FFME;assembly=ffme.win"
         xmlns:controls="clr-namespace:Unosquare.FFME.Windows.Sample.Controls"
         mc:Ignorable="d" DataContext="{StaticResource ViewModel}"
-        WindowStartupLocation="Manual" MinHeight="720" Height="0" MinWidth="1280" Width="0"
-        Title="{Binding WindowTitle}" Background="Black">
+        WindowStartupLocation="Manual" MinHeight="480" Height="0" MinWidth="656     " Width="0"
+        Title="{Binding WindowTitle}" Background="Transparent"
+        Style="{StaticResource CustomWindowStyle}"
+    >
+
+    <!--Title bar button commands-->
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static SystemCommands.CloseWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Close" />
+        <CommandBinding Command="{x:Static SystemCommands.MaximizeWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Maximize" />
+        <CommandBinding Command="{x:Static SystemCommands.MinimizeWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Minimize" />
+        <CommandBinding Command="{x:Static SystemCommands.RestoreWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Restore" />
+    </Window.CommandBindings>
+
+
     <Window.Resources>
         <Storyboard x:Key="ShowControlOpacity" Storyboard.TargetProperty="(UIElement.Opacity)">
             <DoubleAnimation To="1" Duration="0:0:0.100" FillBehavior="HoldEnd" />
@@ -19,74 +32,157 @@
             <DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="0:0:0.25" To="1.0" />
             <DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="0:0:2" From="1.0" To="0.0" BeginTime="0:0:2" />
         </Storyboard>
+
+        <Style x:Key="TitleBarStyle" TargetType="StackPanel">
+            <Setter Property="Background" Value="Gray"></Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Yellow"></Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <Style x:Key="MyGridStyle" TargetType="Grid">
+            <Setter Property="Background" Value="Gray"></Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Yellow"></Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="MyDocPanelStyle" TargetType="DockPanel">
+            <Setter Property="Background" Value="Gray"></Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Yellow"></Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
     </Window.Resources>
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo ProgressValue="{Binding PlaybackProgress}" ProgressState="{Binding PlaybackProgressState}" />
     </Window.TaskbarItemInfo>
-    <Grid Name="Player">
-        <ffme:MediaElement Name="Media" Background="Black" LoadedBehavior="Play" IsDesignPreviewEnabled="True" />
 
-        <DockPanel x:Name="LayoutPanel" LastChildFill="False">
+    
 
-            <controls:ControllerPanelControl
-                x:Name="ControllerPanel"
-                DockPanel.Dock="Bottom"
-                Visibility="{Binding IsApplicationLoaded, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-            <controls:PlaylistPanelControl 
-                x:Name="PlaylistPanel"
-                DockPanel.Dock="Right"
-                Visibility="{Binding IsPlaylistPanelOpen, Converter={StaticResource BooleanToVisibilityConverter}}" />
+    <Border x:Name="MainWindowBorder" BorderBrush="Red" BorderThickness="0" >
+        <Grid x:Name="parentContainer" Background="#000000">
 
-            <controls:PropertiesPanelControl 
-                x:Name="PropertiesPanel"
-                DockPanel.Dock="Right" 
-                Visibility="{Binding IsPropertiesPanelOpen, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-        </DockPanel>
+            <Grid.RowDefinitions>
+                <!--<RowDefinition Height ="Auto"/>-->
+                <RowDefinition Height ="*"/>
+            </Grid.RowDefinitions>
 
-        <Grid Name="NotificationsGrid"
-              MaxWidth="300" MaxHeight="56" VerticalAlignment="Top"
-              HorizontalAlignment="Left" Margin="10,10,0,0">
-            <Grid.Style>
-                <Style TargetType="Grid">
-                    <Setter Property="Opacity" Value="0" />
-                </Style>
-            </Grid.Style>
-            <Border CornerRadius="6" Background="#BB08162d"
-                    BorderBrush="ForestGreen" BorderThickness="0.8"
-                    Padding="6" Name="NotificationsBorder">
-                <StackPanel>
-                    <TextBlock Name="NotificationTextBlock" Foreground="LimeGreen" FontFamily="Lucida Console"
-                               TextWrapping="WrapWithOverflow" Text="{Binding NotificationMessage}">
-                    </TextBlock>
-                </StackPanel>
-            </Border>
-        </Grid>
-
-        <!-- It's important that this is in the end of the XAML as it needs to be on top of everything else! -->
-        <Grid x:Name="InputBox" Visibility="Visible">
-            <Grid Background="Black" Opacity="0.75" />
-            <Border
-                MinWidth="00"
-                Background="DimGray" 
-                BorderBrush="Black" 
-                BorderThickness="1" 
+            <StackPanel Style="{StaticResource TitleBarStyle}" Background="Blue">
+                <Button Width="100">test</Button>
+            </StackPanel>
             
-                HorizontalAlignment="Center" 
-                VerticalAlignment="Center" Width="154" >
-                <StackPanel>
-                    <TextBlock Margin="10,5" Text="Password:" Foreground="WhiteSmoke" FontWeight="Bold" FontSize="12" HorizontalAlignment="Left" />
-                    <PasswordBox Margin="10,5" PasswordChar ="*" HorizontalAlignment="Center" x:Name="InputTextBox" Width="130"/>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
-                        <Button x:Name="YesButton" Margin="10,5" Content="Yes" Foreground="WhiteSmoke" Background="{x:Null}" 
-                          Width="60" Click="YesButton_Click" BorderBrush="Black" BorderThickness="0.5"/>
-                        <Button x:Name="NoButton" Margin="0,5" Content="No" Foreground="WhiteSmoke" Background="{x:Null}" Width="60" Click="NoButton_Click"
-                                BorderBrush="Black" BorderThickness="0.5"
-                                />
-                    </StackPanel>
-                </StackPanel>
-            </Border>
-        </Grid>
+            <!--App content-->
+            <Grid Grid.Row="0" x:Name="AppArea">
+                <Grid Name="Player">
+                    <ffme:MediaElement Name="Media" Background="Black" LoadedBehavior="Play" IsDesignPreviewEnabled="True" />
 
-    </Grid>
+                    <DockPanel x:Name="LayoutPanel" LastChildFill="False">
+
+                        <controls:ControllerPanelControl
+                    x:Name="ControllerPanel"
+                    DockPanel.Dock="Bottom"
+                    Visibility="{Binding IsApplicationLoaded, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                        <controls:PlaylistPanelControl 
+                    x:Name="PlaylistPanel"
+                    DockPanel.Dock="Right"
+                    Visibility="{Binding IsPlaylistPanelOpen, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                        <controls:PropertiesPanelControl 
+                    x:Name="PropertiesPanel"
+                    DockPanel.Dock="Right" 
+                    Visibility="{Binding IsPropertiesPanelOpen, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    </DockPanel>
+
+                    <Grid Name="NotificationsGrid"
+                  MaxWidth="300" MaxHeight="56" VerticalAlignment="Top"
+                  HorizontalAlignment="Left" Margin="10,10,0,0">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Opacity" Value="0" />
+                            </Style>
+                        </Grid.Style>
+                        <Border CornerRadius="6" Background="#BB08162d"
+                        BorderBrush="ForestGreen" BorderThickness="0.8"
+                        Padding="6" Name="NotificationsBorder">
+                            <StackPanel>
+                                <TextBlock Name="NotificationTextBlock" Foreground="LimeGreen" FontFamily="Lucida Console"
+                                   TextWrapping="WrapWithOverflow" Text="{Binding NotificationMessage}">
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- It's important that this is in the end of the XAML as it needs to be on top of everything else! -->
+                    <Grid x:Name="InputBox" Visibility="Collapsed">
+                        <Grid Background="Black" Opacity="0.75" />
+                        <Border
+                    MinWidth="00"
+                    Background="DimGray" 
+                    BorderBrush="Black" 
+                    BorderThickness="1" 
+            
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Center" Width="154" >
+                            <StackPanel>
+                                <TextBlock Margin="10,5" Text="Password:" Foreground="WhiteSmoke" FontWeight="Bold" FontSize="12" HorizontalAlignment="Left" />
+                                <PasswordBox Margin="10,5" PasswordChar ="*" HorizontalAlignment="Center" x:Name="InputTextBox" Width="130"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
+                                    <Button x:Name="YesButton" Margin="10,5" Content="Yes" Foreground="WhiteSmoke" Background="{x:Null}" 
+                              Width="60" Click="YesButton_Click" BorderBrush="Black" BorderThickness="0.5"/>
+                                    <Button x:Name="NoButton" Margin="0,5" Content="No" Foreground="WhiteSmoke" Background="{x:Null}" Width="60" Click="NoButton_Click"
+                                    BorderBrush="Black" BorderThickness="0.5"
+                                    />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                </Grid>
+            
+                <!--Window chrome-->
+                <DockPanel x:Name="MyTitleBar" Height="30" VerticalAlignment="Top" Style="{StaticResource MyDocPanelStyle}"
+                      MouseLeave="MyTitleBar_MouseLeave" MouseEnter="MyTitleBar_MouseEnter" LastChildFill="False"
+                      >
+                    
+                    <!--<Border x:Name="MyTitleBarBorder" BorderBrush="Red" BorderThickness=""
+                            WindowChrome.IsHitTestVisibleInChrome="True">                        
+                    </Border>-->
+
+                    
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <!--App icon-->
+                        <Image Source="/Resources/watermelon.ico" Width="18" Margin="2" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                        <TextBlock Text="Sweet App" FontFamily="Arial" Margin="0" />
+                    </StackPanel>
+
+                    
+                    
+                        <!--Caption buttons-->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Right">
+                            <Button Style="{StaticResource MinimizeButtonStyle}" WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Minimize"
+                                    Command="{x:Static SystemCommands.MinimizeWindowCommand}"/>
+                            <Button x:Name="RestoreButton" Visibility="Collapsed" Style="{StaticResource RestoreButtonStyle}" 
+                                    Command="{x:Static SystemCommands.RestoreWindowCommand}" WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Restore"/>
+                            <Button x:Name="MaximizeButton" Visibility="Visible" Style="{StaticResource MaximizeButtonStyle}" 
+                                    Command="{x:Static SystemCommands.MaximizeWindowCommand}" WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Maximize" />
+                            <Button Style="{StaticResource CloseButtonStyle}" WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Close"
+                                    Command="{x:Static SystemCommands.CloseWindowCommand}"/>
+                        </StackPanel>
+
+                </DockPanel>
+
+            </Grid>
+        </Grid>
+    </Border>
 </Window>

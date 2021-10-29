@@ -49,6 +49,8 @@
 
             Media.RenderingVideo += (s, e) =>
             {
+                if (!ViewModel.IsPropertiesPanelOpen) return;
+
                 #region Create the overlay buffer to work with
 
                 if (overlayBackBuffer != e.Bitmap.Scan0)
@@ -116,6 +118,8 @@
 
             Media.RenderingAudio += (s, e) =>
             {
+                if (!ViewModel.IsPropertiesPanelOpen) return;
+
                 // If we don't have video, we don't need to draw a thing.
                 if (e.EngineState.HasVideo == false) return;
 
