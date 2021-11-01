@@ -1,4 +1,6 @@
-﻿namespace Unosquare.FFME.Windows.Sample
+﻿// #define ENABLE_MY_TITLEBAR
+
+namespace Unosquare.FFME.Windows.Sample
 {
     using ClosedCaptions;
     using Common;
@@ -208,14 +210,16 @@
                     Cursor = Cursors.Arrow;
                     ControllerPanel.Visibility = Visibility.Visible;
                     ShowControllerAnimation?.Begin();
+#if ENABLE_MY_TITLEBAR
                     MyTitleBar.Visibility = Visibility.Visible;
+#endif
                 }
             };
 
             MouseMoveTimer.Start();
 
             StateChanged += MainWindowStateChangeRaised;
-            #endregion
+#endregion
         }
 
         /// <summary>
@@ -248,9 +252,9 @@
             BindMediaRenderingEvents();
         }
 
-        #endregion
+#endregion
 
-        #region Window Control and Input Event Handlers
+#region Window Control and Input Event Handlers
 
         /// <summary>
         /// Handles the Loaded event of the MainWindow control.
@@ -649,7 +653,9 @@
 
                 // RestoreButton.Visibility = Visibility.Visible;
                 // MaximizeButton.Visibility = Visibility.Collapsed;
+#if ENABLE_MY_TITLEBAR
                 MyTitleBar.Visibility = Visibility.Collapsed;
+#endif
             }
             else
             {
@@ -657,7 +663,9 @@
 
                 // RestoreButton.Visibility = Visibility.Collapsed;
                 // MaximizeButton.Visibility = Visibility.Visible;
+#if ENABLE_MY_TITLEBAR
                 MyTitleBar.Visibility = Visibility.Visible;
+#endif
             }
         }
 
@@ -672,6 +680,6 @@
         {
             Debug.WriteLine($"mouse leave titlebar");
         }
-        #endregion
+#endregion
     }
 }

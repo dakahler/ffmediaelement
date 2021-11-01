@@ -9,16 +9,19 @@
         mc:Ignorable="d" DataContext="{StaticResource ViewModel}"
         WindowStartupLocation="Manual" MinHeight="480" Height="0" MinWidth="656     " Width="0"
         Title="{Binding WindowTitle}" Background="Transparent"
-        Style="{StaticResource CustomWindowStyle}"
+        
     >
+    <!--ENABLE_MY_TITLEBAR : inside <Window> -->
+    <!--Style="{StaticResource CustomWindowStyle}"-->
 
-    <!--Title bar button commands-->
-    <Window.CommandBindings>
+
+    <!--Title bar button commands: ENABLE_MY_TITLEBAR-->
+    <!--<Window.CommandBindings>
         <CommandBinding Command="{x:Static SystemCommands.CloseWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Close" />
         <CommandBinding Command="{x:Static SystemCommands.MaximizeWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Maximize" />
         <CommandBinding Command="{x:Static SystemCommands.MinimizeWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Minimize" />
         <CommandBinding Command="{x:Static SystemCommands.RestoreWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Restore" />
-    </Window.CommandBindings>
+    </Window.CommandBindings>-->
 
 
     <Window.Resources>
@@ -149,26 +152,26 @@
                     </Grid>
 
                 </Grid>
-            
-                <!--Window chrome-->
-                <DockPanel x:Name="MyTitleBar" Height="30" VerticalAlignment="Top" Style="{StaticResource MyDocPanelStyle}"
+
+                <!--Window chrome : ENABLE_MY_TITLEBAR -->
+                <!--<DockPanel x:Name="MyTitleBar" Height="30" VerticalAlignment="Top" Style="{StaticResource MyDocPanelStyle}"
                       MouseLeave="MyTitleBar_MouseLeave" MouseEnter="MyTitleBar_MouseEnter" LastChildFill="False"
                       >
                     
-                    <!--<Border x:Name="MyTitleBarBorder" BorderBrush="Red" BorderThickness=""
+                    --><!--<Border x:Name="MyTitleBarBorder" BorderBrush="Red" BorderThickness=""
                             WindowChrome.IsHitTestVisibleInChrome="True">                        
-                    </Border>-->
+                    </Border>--><!--
 
                     
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                        <!--App icon-->
+                        --><!--App icon--><!--
                         <Image Source="/Resources/watermelon.ico" Width="18" Margin="2" HorizontalAlignment="Left" VerticalAlignment="Center" />
                         <TextBlock Text="Sweet App" FontFamily="Arial" Margin="0" />
                     </StackPanel>
 
                     
                     
-                        <!--Caption buttons-->
+                        --><!--Caption buttons--><!--
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Right">
                             <Button Style="{StaticResource MinimizeButtonStyle}" WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Minimize"
                                     Command="{x:Static SystemCommands.MinimizeWindowCommand}"/>
@@ -180,7 +183,7 @@
                                     Command="{x:Static SystemCommands.CloseWindowCommand}"/>
                         </StackPanel>
 
-                </DockPanel>
+                </DockPanel>-->
 
             </Grid>
         </Grid>

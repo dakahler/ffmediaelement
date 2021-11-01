@@ -1,9 +1,13 @@
-﻿namespace Unosquare.FFME.Windows.Sample.ViewModels
+﻿#define ENABLE_MY_TITLEBAR
+
+namespace Unosquare.FFME.Windows.Sample.ViewModels
 {
     using Common;
     using Foundation;
     using System;
+#if !ENABLE_MY_TITLEBAR
     using System.Diagnostics;
+#endif
     using System.IO;
     using System.Windows;
     using System.Windows.Shell;
@@ -237,8 +241,12 @@
                 state = "Ready";
             }
 
+#if ENABLE_MY_TITLEBAR
+            WindowTitle = MainWindow.MyTitle;
+#else
             WindowTitle = $"{title} - {state} - FFME Player v{AppVersion} "
                 + $"FFmpeg {Library.FFmpegVersionInfo} ({(Debugger.IsAttached ? "Debug" : "Release")})";
+#endif
         }
     }
 }
