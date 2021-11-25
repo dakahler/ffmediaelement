@@ -8,6 +8,7 @@ namespace Unosquare.FFME.Windows.Sample
     using System;
     using System.Diagnostics;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
@@ -680,6 +681,28 @@ namespace Unosquare.FFME.Windows.Sample
         {
             Debug.WriteLine($"mouse leave titlebar");
         }
-#endregion
+        #endregion
+
+        private void SetLanguageDictionary()
+        {
+            ResourceDictionary dict = new ResourceDictionary();
+            var path = Environment.CurrentDirectory;
+            switch (Thread.CurrentThread.CurrentCulture.ToString())
+            {
+                case "en-US":
+                    dict.Source = new Uri(".\\Resources\\StringResources.en-US.xaml", UriKind.Relative);
+                    break;
+                default:
+                    dict.Source = new Uri(".\\Resources\\StringResources.xaml", UriKind.Relative);
+                    break;
+            }
+
+            this.Resources.MergedDictionaries.Add(dict);
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            SetLanguageDictionary();
+        }
     }
 }

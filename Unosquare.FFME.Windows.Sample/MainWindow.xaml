@@ -9,6 +9,7 @@
         mc:Ignorable="d" DataContext="{StaticResource ViewModel}"
         WindowStartupLocation="Manual" MinHeight="480" Height="0" MinWidth="656     " Width="0"
         Title="{Binding WindowTitle}" Background="Transparent"
+        Loaded="Window_Loaded"
         
     >
     <!--ENABLE_MY_TITLEBAR : inside <Window> -->
@@ -138,7 +139,7 @@
                     HorizontalAlignment="Center" 
                     VerticalAlignment="Center" Width="154" >
                             <StackPanel>
-                                <TextBlock Margin="10,5" Text="Password:" Foreground="WhiteSmoke" FontWeight="Bold" FontSize="12" HorizontalAlignment="Left" />
+                                <TextBlock Margin="10,5" Text="{DynamicResource password}" Foreground="WhiteSmoke" FontWeight="Bold" FontSize="12" HorizontalAlignment="Left" />
                                 <PasswordBox Margin="10,5" PasswordChar ="*" HorizontalAlignment="Center" x:Name="InputTextBox" Width="130"/>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" >
                                     <Button x:Name="YesButton" Margin="10,5" Content="Yes" Foreground="WhiteSmoke" Background="{x:Null}" 
