@@ -506,7 +506,7 @@ namespace Unosquare.FFME.Windows.Sample
 
                 return;
             }
-
+#if false // prevent file dump
             // Capture Screenshot to desktop
             if (e.Key == Key.T)
             {
@@ -577,6 +577,7 @@ namespace Unosquare.FFME.Windows.Sample
 
                 return;
             }
+#endif
 
             // Exit fullscreen
             if (e.Key == Key.Escape && WindowStyle == WindowStyle.None)
