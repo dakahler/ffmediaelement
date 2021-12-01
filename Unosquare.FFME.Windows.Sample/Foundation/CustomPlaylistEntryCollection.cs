@@ -152,9 +152,12 @@
                     entry.Thumbnail = null;
                 }
 
-                using (var bmp = bitmap.CreateDrawingBitmap())
+                if(Path.GetExtension(mediaSource.ToString()) != ".svp")
                 {
-                    entry.Thumbnail = ThumbnailGenerator.SnapThumbnail(bmp, ViewModel.ThumbsDirectory);
+                    using (var bmp = bitmap.CreateDrawingBitmap())
+                    {
+                        entry.Thumbnail = ThumbnailGenerator.SnapThumbnail(bmp, ViewModel.ThumbsDirectory);
+                    }
                 }
             }
         }
