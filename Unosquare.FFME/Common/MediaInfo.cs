@@ -117,8 +117,9 @@
 
 #pragma warning disable CS0618 // Type or member is obsolete
 
-                // ffmpeg.avcodec_parameters_to_context(codecContext, s->codecpar);
-                ffmpeg.avcodec_copy_context(codecContext, s->codec);
+                ffmpeg.avcodec_parameters_to_context(codecContext, s->codecpar);
+
+                // ffmpeg.avcodec_copy_context(codecContext, s->codec);
 #pragma warning restore CS0618 // Type or member is obsolete
 
                 var bitsPerSample = codecContext->codec_type == AVMediaType.AVMEDIA_TYPE_AUDIO ?
@@ -150,7 +151,7 @@
                         bitsPerSample * codecContext->channels * codecContext->sample_rate :
                         codecContext->bit_rate,
                     MaxBitRate = codecContext->rc_max_rate,
-                    InfoFrameCount = s->codec_info_nb_frames,
+                    InfoFrameCount = s->nb_frames,
                     TimeBase = s->time_base,
                     SampleFormat = codecContext->sample_fmt,
                     SampleRate = codecContext->sample_rate,
@@ -469,7 +470,7 @@
         /// <summary>
         /// Gets the number of frames that were read to obtain the stream's information.
         /// </summary>
-        public int InfoFrameCount { get; internal set; }
+        public long InfoFrameCount { get; internal set; }
 
         /// <summary>
         /// Gets the number of reference frames.
@@ -556,7 +557,7 @@
         /// <summary>
         /// Gets the chapter identifier.
         /// </summary>
-        public int ChapterId { get; internal set; }
+        public long ChapterId { get; internal set; }
 
         /// <summary>
         /// Gets the start time of the chapter.
