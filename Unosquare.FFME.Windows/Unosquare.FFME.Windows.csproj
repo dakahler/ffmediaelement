@@ -56,6 +56,11 @@
 
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net5.0-windows|AnyCPU'">
+    <Optimize>true</Optimize>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Include="$(SolutionDir)\Support\readme.txt" Pack="true" PackagePath="" />
     <None Include="$(SolutionDir)\LICENSE" Pack="true" PackagePath="" />

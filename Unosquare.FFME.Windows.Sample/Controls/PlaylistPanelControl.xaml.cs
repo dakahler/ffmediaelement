@@ -1,7 +1,9 @@
 ﻿namespace Unosquare.FFME.Windows.Sample.Controls
 {
     using Foundation;
+    using Microsoft.Win32;
     using System;
+    using System.IO;
     using System.Windows;
     using System.Windows.Controls.Primitives;
     using System.Windows.Input;
@@ -46,6 +48,16 @@
                     FocusSearchBox();
                 else
                     FocusFileBox();
+            };
+
+            OpenFileTextBox.MouseDoubleClick += (s, e) =>
+            {
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    // this.OpenFileTextBox.Text = File.ReadAllText(openFileDialog.FileName);
+                    this.OpenFileTextBox.Text = openFileDialog.FileName;
+                }
             };
         }
 

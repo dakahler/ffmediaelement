@@ -9,7 +9,7 @@
     </When>
     <Otherwise>
       <PropertyGroup>
-        <TargetFrameworks>net5.0-windows;net461;net48</TargetFrameworks>
+        <TargetFrameworks>net5.0-windows</TargetFrameworks>
       </PropertyGroup>
     </Otherwise>
   </Choose>
@@ -21,7 +21,7 @@
     <Title>FFME Reference Player</Title>
     <AssemblyTitle>FFME Reference Player</AssemblyTitle>
     <AssemblyName>ffmeplay.win</AssemblyName>
-    <RootNamespace>Unosquare.FFME.Windows.Sample</RootNamespace>
+    <RootNamespace>Unosquare.FFME.Windows.Sample</RootNamespace>    
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <CodeAnalysisRuleSet>..\Analyzers.ruleset</CodeAnalysisRuleSet>
@@ -42,11 +42,16 @@
     <Description>Reference implementation of a media player using the FFME</Description>
     <Copyright>Unosquare SA de CV, Mario Di Vece, and Contributors, (C) 2015-2020</Copyright>
     <PackageProjectUrl>https://github.com/unosquare/ffmediaelement</PackageProjectUrl>
-    <ApplicationIcon>ffmpeg.ico</ApplicationIcon>
+    <ApplicationIcon>svp.ico</ApplicationIcon>
+    <Win32Resource />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <DefineConstants>TRACE;DEBUG;HANDLE_RENDERING_EVENTS</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net5.0-windows|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE;HANDLE_RENDERING_EVENTS</DefineConstants>
   </PropertyGroup>
   
   <ItemGroup>
@@ -124,5 +129,13 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="$(SolutionDir)\..\post-build-script.bat $(SolutionDir) $(TargetDir)" />
+  </Target>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="$(SolutionDir)\..\release-to-repository.bat $(TargetDir) $(ConfigurationName) $(PlatformName)" />
+  </Target>
 
 </Project>

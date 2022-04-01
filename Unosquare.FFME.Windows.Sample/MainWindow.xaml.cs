@@ -1,10 +1,14 @@
-﻿namespace Unosquare.FFME.Windows.Sample
+﻿// #define ENABLE_MY_TITLEBAR
+
+namespace Unosquare.FFME.Windows.Sample
 {
     using ClosedCaptions;
     using Common;
     using Foundation;
     using System;
+    using System.Diagnostics;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
@@ -143,11 +147,38 @@
             MouseMove += (s, e) =>
             {
                 var currentPosition = e.GetPosition(window);
-                if (Math.Abs(currentPosition.X - LastMousePosition.X) > double.Epsilon ||
-                    Math.Abs(currentPosition.Y - LastMousePosition.Y) > double.Epsilon)
+                double diffX = currentPosition.X - LastMousePosition.X;
+                double diffY = currentPosition.Y - LastMousePosition.Y;
+                if (Math.Abs(diffX) > double.Epsilon ||
+                    Math.Abs(diffY) > double.Epsilon)
                     LastMouseMoveTime = DateTime.UtcNow;
 
+                if (e.MouseDevice.LeftButton == MouseButtonState.Pressed)
+                {
+                    this.Cursor = Cursors.Hand;
+
+                    // if (ViewModel.Controller.MediaElementZoom > 1)
+                    {
+                        Debug.WriteLine($"debug pos:{ViewModel.Controller.MediaElementPos}");
+                        ViewModel.Controller.MediaElementPos = new Point(
+                            ViewModel.Controller.MediaElementPos.X - diffX,
+                            ViewModel.Controller.MediaElementPos.Y - diffY);
+                    }
+                }
+
                 LastMousePosition = currentPosition;
+            };
+
+            MouseDown += (s, e) =>
+            {
+                // start of grab ?
+                if (e.MouseDevice.LeftButton == MouseButtonState.Pressed)
+                {
+                    var src = e.OriginalSource as UIElement;
+                    this.Cursor = Cursors.Hand;
+
+                    Debug.WriteLine($"debug zoom:{ViewModel.Controller.MediaElementZoom}");
+                }
             };
 
             MouseLeave += (s, e) =>
@@ -164,25 +195,32 @@
             MouseMoveTimer.Tick += (s, e) =>
             {
                 var elapsedSinceMouseMove = DateTime.UtcNow.Subtract(LastMouseMoveTime);
-                if (elapsedSinceMouseMove.TotalMilliseconds >= 3000 && Media.IsOpen && ControllerPanel.IsMouseOver == false
+                if (elapsedSinceMouseMove.TotalMilliseconds >= 3000 && Media.IsOpen &&
+                    (ControllerPanel.IsMouseOver == false)
                     && PropertiesPanel.Visibility != Visibility.Visible && ControllerPanel.SoundMenuPopup.IsOpen == false)
                 {
                     if (IsControllerHideCompleted) return;
                     Cursor = Cursors.None;
                     HideControllerAnimation?.Begin();
                     IsControllerHideCompleted = false;
+
+                    // MyTitleBar.Visibility = Visibility.Hidden;
                 }
                 else
                 {
                     Cursor = Cursors.Arrow;
                     ControllerPanel.Visibility = Visibility.Visible;
                     ShowControllerAnimation?.Begin();
+#if ENABLE_MY_TITLEBAR
+                    MyTitleBar.Visibility = Visibility.Visible;
+#endif
                 }
             };
 
             MouseMoveTimer.Start();
 
-            #endregion
+            StateChanged += MainWindowStateChangeRaised;
+#endregion
         }
 
         /// <summary>
@@ -196,6 +234,8 @@
             // MediaElement event bindings
             Media.PreviewMouseDoubleClick += OnMediaDoubleClick;
             Media.MediaInitializing += OnMediaInitializing;
+            Media.MediaOpening += OnMediaOpeningMy;
+            Media.PacketRead += OnPacketReadMy;
             Media.MediaOpening += OnMediaOpening;
             Media.MediaOpened += OnMediaOpened;
             Media.MediaReady += OnMediaReady;
@@ -213,9 +253,9 @@
             BindMediaRenderingEvents();
         }
 
-        #endregion
+#endregion
 
-        #region Window Control and Input Event Handlers
+#region Window Control and Input Event Handlers
 
         /// <summary>
         /// Handles the Loaded event of the MainWindow control.
@@ -273,7 +313,7 @@
         private async void OnWindowKeyDown(object sender, KeyEventArgs e)
         {
             // Debug.WriteLine($"KEY: {e.Key}, SRC: {e.OriginalSource?.GetType().Name}");
-            if (e.OriginalSource is TextBox)
+            if (e.OriginalSource is TextBox || e.OriginalSource is PasswordBox)
                 return;
 
             // Keep the key focus on the main window
@@ -466,7 +506,7 @@
 
                 return;
             }
-
+#if false // prevent file dump
             // Capture Screenshot to desktop
             if (e.Key == Key.T)
             {
@@ -537,6 +577,7 @@
 
                 return;
             }
+#endif
 
             // Exit fullscreen
             if (e.Key == Key.Escape && WindowStyle == WindowStyle.None)
@@ -571,8 +612,98 @@
 
             var delta = (e.Delta / 2000d).ToMultipleOf(0.05d);
             ViewModel.Controller.MediaElementZoom = Math.Round(App.ViewModel.Controller.MediaElementZoom + delta, 2);
+            if (ViewModel.Controller.MediaElementZoom < 1)
+                ViewModel.Controller.MediaElementPos = new Point(0, 0);
         }
 
+        // Can execute
+        private void CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        // Minimize
+        private void CommandBinding_Executed_Minimize(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.MinimizeWindow(this);
+        }
+
+        // Maximize
+        private void CommandBinding_Executed_Maximize(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.MaximizeWindow(this);
+        }
+
+        // Restore
+        private void CommandBinding_Executed_Restore(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.RestoreWindow(this);
+        }
+
+        // Close
+        private void CommandBinding_Executed_Close(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.CloseWindow(this);
+        }
+
+        // State change
+        private void MainWindowStateChangeRaised(object sender, EventArgs e)
+        {
+            if (WindowState == WindowState.Maximized)
+            {
+                MainWindowBorder.BorderThickness = new Thickness(0);
+
+                // RestoreButton.Visibility = Visibility.Visible;
+                // MaximizeButton.Visibility = Visibility.Collapsed;
+#if ENABLE_MY_TITLEBAR
+                MyTitleBar.Visibility = Visibility.Collapsed;
+#endif
+            }
+            else
+            {
+                MainWindowBorder.BorderThickness = new Thickness(0);
+
+                // RestoreButton.Visibility = Visibility.Collapsed;
+                // MaximizeButton.Visibility = Visibility.Visible;
+#if ENABLE_MY_TITLEBAR
+                MyTitleBar.Visibility = Visibility.Visible;
+#endif
+            }
+        }
+
+        // mouse enter event
+        private void MyTitleBar_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Debug.WriteLine($"mouse enter titlebar");
+        }
+
+        // mouse enter event
+        private void MyTitleBar_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Debug.WriteLine($"mouse leave titlebar");
+        }
         #endregion
+
+        private void SetLanguageDictionary()
+        {
+            ResourceDictionary dict = new ResourceDictionary();
+            var path = Environment.CurrentDirectory;
+            switch (Thread.CurrentThread.CurrentCulture.ToString())
+            {
+                case "en-US":
+                    dict.Source = new Uri(".\\Resources\\StringResources.en-US.xaml", UriKind.Relative);
+                    break;
+                default:
+                    dict.Source = new Uri(".\\Resources\\StringResources.xaml", UriKind.Relative);
+                    break;
+            }
+
+            this.Resources.MergedDictionaries.Add(dict);
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            SetLanguageDictionary();
+        }
     }
 }

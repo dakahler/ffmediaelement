@@ -25,7 +25,11 @@
         public string Thumbnail
         {
             get => GetMappedAttributeValue();
+#if true
             set => SetMappedAttributeValue(value);
+#else
+            set => NotAction(value);
+#endif
         }
 
         /// <summary>
@@ -72,6 +76,11 @@
         {
             if (Attributes.SetEntryValue(PropertyMap[propertyName ?? throw new ArgumentNullException(nameof(propertyName))], value))
                 OnPropertyChanged(propertyName);
+        }
+
+        private void NotAction(string value)
+        {
+            return;
         }
     }
 }

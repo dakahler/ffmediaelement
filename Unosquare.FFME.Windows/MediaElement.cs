@@ -51,6 +51,7 @@ namespace Unosquare.FFME
 
         private bool m_IsDisposed;
 
+        private bool m_wait;
         #endregion
 
         #region Constructors
@@ -79,6 +80,8 @@ namespace Unosquare.FFME
         {
             try
             {
+                m_wait = true;
+
                 AllowContentChange = true;
 
                 if (!Library.IsInDesignMode)
